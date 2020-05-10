@@ -37,8 +37,8 @@ export class Battle {
     static create() {
         let ret = new Battle()
 
-        // let hs = Array.from({length: HeroType.Count}, (_, i) => Global.m.config.heroCfgs[i])
-        let hs = Array.from({length: 3}, (_, i) => Global.m.config.heroCfgs[i])
+        let hs = Array.from({length: HeroType.Count}, (_, i) => Global.m.config.heroCfgs[i])
+        // let hs = Array.from({length: 3}, (_, i) => Global.m.config.heroCfgs[i])
         let classed = utils.splitArray(hs, t => t.classType)
         
         Array.from({ length: HeroSide.Count }, (_, side) => {

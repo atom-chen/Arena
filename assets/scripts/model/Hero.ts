@@ -55,7 +55,7 @@ export class Hero {
     private _lastMoveBackTime = 0
     private _lastShootTime = 0
 
-    get hitTime() { return this.type == HeroType.Archer ? 1.1 : 0.5 }   //TODO: config or depends on attackDelay
+    get hitTime() { return this.type == HeroType.Archer ? 1 : 0.5 }   //TODO: config or depends on attackDelay
     ultTime = 0.5   //TODO: config or depends on attackDelay
     moveTime = 0.5   //TODO: config or depends on attackDelay
     
