@@ -1,0 +1,61 @@
+import MenuToolbarNode from "../view/menu/MenuToolbarNode";
+import { SceneType } from "./SceneType";
+import { MenuToolbarNodeType } from "../view/menu/MenuToolbarNodeType";
+
+const {ccclass, property} = cc._decorator;
+
+
+@ccclass
+export default class MenuScene extends cc.Component {
+    @property(cc.PageView) pageView: cc.PageView = null
+    @property(cc.Node) pageViewContentNode: cc.Node = null
+    @property(MenuToolbarNode) toolbar: MenuToolbarNode = null
+
+    savedSize = new cc.Size(0, 0)
+    pageState = MenuToolbarNodeType.Play
+
+    onLoad() {
+        this.toolbar.onClick.add(this, t => this.pageView.setCurrentPageIndex(t))
+        this.savedSize = cc.winSize
+        this.updateNonWidgetSize()
+        this.node.on(cc.Node.EventType.SIZE_CHANGED, () => {
+            this.savedSize = cc.winSize
+            this.updateNonWidgetSize()
+        })
+    }
+    start() {
+        this.pageView.setCurrentPageIndex(this.pageState)
+    }
+    onPlayButton() {
+        cc.director.loadScene(SceneType.Game)
+    }
+    update(dt) {
+        // if (this.savedSize.width != cc.winSize.width) {
+        //     this.savedSize = cc.winSize
+        //     this.updateNonWidgetSize()
+        // }
+        cc.log(this.pageViewContentNode.children[0].width)
+    }
+    updateNonWidgetSize() {
+        let w = cc.winSize.width
+        this.toolbar.node.children.forEach(c => c.width = (w / this.toolbar.node.childrenCount - 6))
+        w = cc.winSize.width
+        this.pageViewContentNode.children.forEach(c => {
+            cc.log("[TEST]", w)
+            c.width = w
+        })
+        // cc.log("[TEST]", w, -w / 2 - w * this.pageState)
+        // this.pageViewContentNode.stopAllActions()
+        this.pageViewContentNode.x = -w / 2 - w * this.pageState
+        // cc.tween(this.pageViewContentNode).to(1, { x: cc.v2(-w / 2 - w * this.pageState, 0) })
+        // cc.tween(this.pageView.node).delay(0.5).call(() => 
+            // this.pageView.setCurrentPageIndex(this.pageState)
+            // this.pageViewContentNode.x = -w * this.pageState
+        // ).start()
+    }
+    onPageViewIndexCahnged(a, b) {
+        this.pageState = this.pageView.getCurrentPageIndex()
+        this.toolbar.animateButton(this.pageState)
+        // MenuPageState
+    }
+}

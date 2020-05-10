@@ -1,0 +1,375 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "MainAttack",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 1,
+  "sample": 40,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "ArmLNode": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": -39.477
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 2.308
+            },
+            {
+              "frame": 0.5,
+              "value": -18.563
+            },
+            {
+              "frame": 0.625,
+              "value": 2.308
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/ArmRNode/Arm": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": 18.266
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ],
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                55.014,
+                21.335,
+                0
+              ]
+            },
+            {
+              "frame": 0.5,
+              "value": [
+                84.446,
+                84.216,
+                0
+              ]
+            },
+            {
+              "frame": 1,
+              "value": [
+                55.014,
+                21.335,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/BowT": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": 13.93
+            },
+            {
+              "frame": 0.625,
+              "value": -14.360999999999992
+            },
+            {
+              "frame": 1,
+              "value": 0.06300000000000328
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/BowT copy": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": -27.46099999999999
+            },
+            {
+              "frame": 0.5,
+              "value": -41.00399999999999
+            },
+            {
+              "frame": 0.625,
+              "value": -14.242999999999991
+            },
+            {
+              "frame": 1,
+              "value": -27.05499999999999
+            }
+          ]
+        }
+      },
+      "HeadNode": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 1.604
+            },
+            {
+              "frame": 0.5,
+              "value": -9.419999999999998
+            },
+            {
+              "frame": 1,
+              "value": 1.604
+            }
+          ]
+        }
+      },
+      "Body": {
+        "props": {
+          "scale": [
+            {
+              "frame": 0,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 1,
+                "y": 1
+              }
+            },
+            {
+              "frame": 0.5,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.95,
+                "y": 0.95
+              }
+            },
+            {
+              "frame": 1,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 1,
+                "y": 1
+              }
+            }
+          ]
+        }
+      },
+      "LegR": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": -4
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ],
+          "scale": [
+            {
+              "frame": 0,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.8,
+                "y": 0.8
+              }
+            },
+            {
+              "frame": 0.5,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.75,
+                "y": 0.75
+              }
+            },
+            {
+              "frame": 1,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.8,
+                "y": 0.8
+              }
+            }
+          ]
+        }
+      },
+      "LegL": {
+        "props": {
+          "scale": [
+            {
+              "frame": 0,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.8,
+                "y": 0.8
+              }
+            },
+            {
+              "frame": 0.5,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.75,
+                "y": 0.75
+              }
+            },
+            {
+              "frame": 1,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.8,
+                "y": 0.8
+              }
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/Bullet": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                27.37,
+                32.249,
+                0
+              ]
+            },
+            {
+              "frame": 0.5,
+              "value": [
+                62.928,
+                65.723,
+                0
+              ]
+            },
+            {
+              "frame": 0.625,
+              "value": [
+                27.37,
+                32.249,
+                0
+              ]
+            },
+            {
+              "frame": 1,
+              "value": [
+                27.37,
+                32.249,
+                0
+              ]
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0.6920000000000002
+            },
+            {
+              "frame": 0.5,
+              "value": 10.6
+            },
+            {
+              "frame": 0.625,
+              "value": 0.6920000000000002
+            },
+            {
+              "frame": 1,
+              "value": 0.6920000000000002
+            }
+          ],
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 255
+            },
+            {
+              "frame": 0.5,
+              "value": 255
+            },
+            {
+              "frame": 0.525,
+              "value": 0
+            },
+            {
+              "frame": 0.975,
+              "value": 0
+            },
+            {
+              "frame": 1,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/archerHit": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 255
+            },
+            {
+              "frame": 0.5,
+              "value": 255
+            },
+            {
+              "frame": 1,
+              "value": 50
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/Bullet/archerHit": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 50
+            },
+            {
+              "frame": 0.5,
+              "value": 255
+            },
+            {
+              "frame": 1,
+              "value": 50
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}
