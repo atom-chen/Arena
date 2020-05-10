@@ -37,6 +37,9 @@ export default class HeroView extends cc.Component {
         h.onTakeDamage.add(this, info => {
             this.health.string = '' + h.health
             this.healthBar.progress = h.health / h.fullHealth
+            const t = 0.09
+            cc.tween(this.node).to(t, { color: cc.Color.RED }).to(t, { color: cc.Color.WHITE }).start()
+
         })
         h.onDeath.add(this, () => 
             cc.tween(this.icon.node).to(0.3, { angle: 360, scale: 0.01, opacity: 0 }).call(() => this.node.destroy()).start()  
