@@ -86,7 +86,7 @@ export default class HeroView extends cc.Component {
             n.setPosition(this._getParticlePosition(otherView.node))
             this._particle = n
             let anim = this._getParticleAnim(otherView.node)
-            anim.target(n).start()
+            anim.target(n).call(() => n.destroy()).start()
         } else {
             cc.log("[HEROVIEW]", `error can;t find view for: ${enemy}`)
         }
@@ -111,12 +111,10 @@ export default class HeroView extends cc.Component {
             return cc.tween()
                     .to(0, { opacity: 255, angle: 90 })
                     .sequence(...moveTweens)
-                    .call(() => this._particle.destroy())
         } else {
             return cc.tween()
                 .to(0, { opacity: 255 })
                 .to(0.5, { position: enemy.getPosition() })
-                .call(() => this._particle.destroy())
         }
     }
     private _createBullet() {
