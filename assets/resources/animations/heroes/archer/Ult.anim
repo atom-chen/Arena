@@ -1,6 +1,6 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "MainAttack",
+  "_name": "Ult",
   "_objFlags": 0,
   "_native": "",
   "_duration": 1,
@@ -18,7 +18,7 @@
             },
             {
               "frame": 0.5,
-              "value": -65.477
+              "value": -91.477
             },
             {
               "frame": 1,
@@ -356,11 +356,11 @@
           "opacity": [
             {
               "frame": 0,
-              "value": 50
+              "value": 0
             },
             {
               "frame": 0.5,
-              "value": 255
+              "value": 0
             },
             {
               "frame": 1,
@@ -368,10 +368,188 @@
             }
           ]
         }
+      },
+      "Glow": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.3,
+              "value": 255
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ],
+          "scale": [
+            {
+              "frame": 0,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "frame": 0.3,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 20,
+                "y": 30
+              }
+            },
+            {
+              "frame": 0.55,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 18,
+                "y": 25
+              }
+            },
+            {
+              "frame": 0.8,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 20,
+                "y": 30
+              }
+            },
+            {
+              "frame": 1,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 20,
+                "y": 30
+              }
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/Bullet2": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                27.37,
+                32.249,
+                0
+              ]
+            },
+            {
+              "frame": 0.5,
+              "value": [
+                62,
+                65,
+                0
+              ]
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0.6920000000000002
+            },
+            {
+              "frame": 0.5,
+              "value": 0
+            }
+          ],
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": 255
+            },
+            {
+              "frame": 0.525,
+              "value": 0
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/Bullet3": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                27.37,
+                32.249,
+                0
+              ]
+            },
+            {
+              "frame": 0.5,
+              "value": [
+                62,
+                65,
+                0
+              ]
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0.6920000000000002
+            },
+            {
+              "frame": 0.5,
+              "value": 20
+            }
+          ],
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": 255
+            },
+            {
+              "frame": 0.525,
+              "value": 0
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ]
+        }
+      },
+      "ArmLNode/Bow/Bullet/glow": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.5,
+              "value": 255
+            },
+            {
+              "frame": 1,
+              "value": 0
+            }
+          ]
+        }
       }
     },
     "comps": {
-      "MainAttack": {
+      "UltAnim": {
         "finished": [
           {
             "frame": 0,

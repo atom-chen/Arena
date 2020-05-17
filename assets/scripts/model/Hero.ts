@@ -31,8 +31,7 @@ export class Hero {
     savedState: HeroState
     state = HeroState.Freeze
     
-    // ultDt = Number.MAX_VALUE
-    // attackDt = Number.MAX_VALUE
+    _ultDt = Number.MAX_VALUE
 
     onDeath = new Event<Hero>()
     onAttack = new Event<{o: Hero, u: boolean}>()
@@ -41,7 +40,7 @@ export class Hero {
     onStartMoving = new Event<Hero>()
     onMovingBack = new Event()
     
-    onUlt = new Event<Hero>()
+    onUlt = new Event<{o: Hero, t: Array<Hero>}>()
     onUltEnded = new Event<Hero>()
     onFreeze = new Event()
     onUnFreeze = new Event()
@@ -56,7 +55,7 @@ export class Hero {
     private _lastShootTime = 0
 
     get hitTime() { return this.type == HeroType.Archer ? 1 : 0.5 }   //TODO: config or depends on attackDelay
-    ultTime = 0.5   //TODO: config or depends on attackDelay
+    ultTime = 1   //TODO: config or depends on attackDelay
     moveTime = 0.5   //TODO: config or depends on attackDelay
     
     get killed() { return this.health <= 0 }
@@ -64,7 +63,7 @@ export class Hero {
     get classType() { return this.config.classType }
     get damage() { return this.config.damage }
     get name() { return this.config.name }
-    get ultProgress() { return Math.min(1, ((this._time - this._lastUltTime) * 1000) / this.config.ultDelayMs) }
+    get ultProgress() { return Math.min(1, (this._ultDt * 1000) / this.config.ultDelayMs) }
     get attackDelayMs() { return this.config.attackDelayMs * 2.5 }
 
     getConfig() { this.config = Global.m.config.heroCfgs[this.type] }
@@ -86,6 +85,7 @@ export class Hero {
 
     update(dt) {
         if (this.state == HeroState.Freeze || this.killed) return
+        if (this.state != HeroState.Ulting) this._ultDt += dt
         this._time += dt
 
         if (this.state == HeroState.MovingTo && this.enemiesInRange.find(e => e == this.currentEnemy)) { this.shoot() }
@@ -109,21 +109,26 @@ export class Hero {
 
     ult() {
         if (this.killed || Global.m.battle.state != BattleState.Battle) return
-        if ((this._time - this._lastUltTime) * 1000 < this.config.ultDelayMs) return
+        if (this._ultDt * 1000 < this.config.ultDelayMs) return
+        
+        let allEnemies = Global.m.battle.sides[HeroSide.Right - this.side].heroes
+        let toAttack = allEnemies.filter(e => !e.killed)
+        
+        this._ultDt = 0
+        this._lastUltTime = this._time
 
         this.state = HeroState.Ulting
-        this._lastUltTime = this._time
-        this.onUlt.dispatch(this)
+        this.onUlt.dispatch({o: this, t: toAttack})
         Global.m.battle.logAllStates()
     }
     afterUlt() {
-        let b = Global.m.battle
-        let opponentSide = b.sides[HeroSide.Right - this.side]
-        opponentSide.firstLine.forEach(e => {
-            e.getDamage(this, true)
-        })
-        this.state = HeroState.Waiting
         this.onUltEnded.dispatch(this)
+
+        let allEnemies = Global.m.battle.sides[HeroSide.Right - this.side].heroes
+        let attacked = allEnemies.filter(e => !e.killed)
+        attacked.forEach(h => h.getDamage(this, true))
+
+        this.state = HeroState.Waiting
     }
     shoot() {
         if (this.currentEnemy) {

@@ -60,7 +60,7 @@ export class Battle {
         this.allHeroes.forEach(h => {
             h.startBattle()
             h.id = id++
-            h.onUlt.add(this, e => this.whenUlt(e))
+            h.onUlt.add(this, info => this.whenUlt(info.o))
             h.onUltEnded.add(this, e => this.whenUltEnded(e))
             h.onDeath.add(this, e => {
                 this.checkFinish()
