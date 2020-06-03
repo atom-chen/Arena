@@ -18,6 +18,7 @@ export const enum HeroState {
     MovingBack,
     Ulting,
     Count
+    
 }
 
 export class Hero {
