@@ -3,9 +3,16 @@ import { Hero } from "../model/Hero";
 import { Loader } from "../utils/Loader";
 import { Global } from "../model/Global";
 import { BattleState } from "../model/Battle";
+import { UltType } from "../model/Config";
 
 const {ccclass, property} = cc._decorator;
 
+const PBarColors = new Map<UltType, { m: cc.Color, bg: cc.Color }>([
+    [UltType.AttackAll, { m: cc.color(241, 177, 61), bg: cc.color(134, 74, 6) }],
+    [UltType.Healing, { m: cc.color(228, 84, 84), bg: cc.color(129, 67, 67) }],
+    [UltType.GodBless, { m: cc.color(84, 153, 228), bg: cc.color(72, 69, 141) }],
+    [UltType.BoostAttack, { m: cc.color(101, 255, 95), bg: cc.color(82, 136, 104) }]
+])
 const UltNotReadyColor = cc.color(79, 105, 185)
 const UltReadyColor = cc.color(45, 140, 243)
 
@@ -20,6 +27,7 @@ export default class HeroButtonNode extends cc.Component {
     @property(cc.ProgressBar) healthPg: cc.ProgressBar = null
     @property(cc.Label) ult: cc.Label = null
     @property(cc.ProgressBar) ultPg: cc.ProgressBar = null
+    @property(cc.Node) ultPgSlider: cc.Node = null
 
     onClick = new Event<Hero>()
     private _hero: Hero
@@ -30,7 +38,10 @@ export default class HeroButtonNode extends cc.Component {
         this.updateHealthPg()
         this.updateUltPg()
 
-        this._hero.onTakeDamage.add(this, () => this.updateHealthPg())
+        const pBarColors = PBarColors.has(this._hero.ultType) ? PBarColors.get(this._hero.ultType) : PBarColors.get(UltType.AttackAll)
+        this.ultPg.node.color = pBarColors.bg
+        this.ultPgSlider.color = pBarColors.m
+        this._hero.onHealthChanged.add(this, () => this.updateHealthPg())
         this._hero.onDeath.add(this, () => this.whenDeath())
         return Loader.loadTexture(`monster${hero.type+1}_ic`).then(sf => this.heroIcon.spriteFrame = sf)
     }

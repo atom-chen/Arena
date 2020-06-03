@@ -2,7 +2,12 @@ import { Jsonable, jp } from "../utils/Jsonable";
 import { HeroType, HeroClassType } from "./HeroType";
 import { Loader } from "../utils/Loader";
 
-
+export enum UltType {
+    Healing = "h",
+    AttackAll = "aa",
+    GodBless = "gb",
+    BoostAttack = "ba"
+}
 export class HeroCfg extends Jsonable {
     type: HeroType
     @jp("c") classType: HeroClassType
@@ -10,8 +15,12 @@ export class HeroCfg extends Jsonable {
     @jp("n") name: string
     @jp("d") damage: number
     @jp("dl") attackDelayMs: number
-    @jp("ud") ultDamage: number
+
+    @jp("ut") ultType: UltType
+    @jp("uv") ultValue: number
+
     @jp("udl") ultDelayMs: number
+    @jp("udur") ultDurationMs: number //optional
     
     static fromJson(json) {
         let ret = new HeroCfg()

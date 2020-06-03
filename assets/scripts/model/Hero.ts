@@ -1,8 +1,9 @@
 import { HeroType, HeroClassType } from "./HeroType"
-import { HeroCfg } from "./Config"
+import { HeroCfg, UltType } from "./Config"
 import { Global } from "./Global"
 import { Event } from "../utils/Event"
 import { BattleState } from "./Battle"
+import { Buff, BuffType } from "./Buff"
 
 export const enum HeroSide {
     Left = 0,
@@ -18,7 +19,6 @@ export const enum HeroState {
     MovingBack,
     Ulting,
     Count
-    
 }
 
 export class Hero {
@@ -31,20 +31,23 @@ export class Hero {
 
     savedState: HeroState
     state = HeroState.Freeze
+
+    private _buffs = new Array<Buff>()
     
     _ultDt = Number.MAX_VALUE
 
     onDeath = new Event<Hero>()
     onAttack = new Event<{o: Hero, u: boolean}>()
-    onTakeDamage = new Event<{was: number}>()
+    onHealthChanged = new Event<{was: number}>()
     
     onStartMoving = new Event<Hero>()
     onMovingBack = new Event()
     
-    onUlt = new Event<{o: Hero, t: Array<Hero>}>()
+    onUlt = new Event<{o: Hero, ut: UltType, t: Array<Hero>}>()
     onUltEnded = new Event<Hero>()
     onFreeze = new Event()
     onUnFreeze = new Event()
+    onBuffAdded = new Event<Buff>()
 
     currentEnemy: Hero
     enemiesInRange = new Array<Hero>()
@@ -56,7 +59,7 @@ export class Hero {
     private _lastShootTime = 0
 
     get hitTime() { return this.type == HeroType.Archer ? 1 : 0.5 }   //TODO: config or depends on attackDelay
-    ultTime = 1   //TODO: config or depends on attackDelay
+    get ultTime() { return this.ultType == UltType.AttackAll ? 1 : 0 }   //TODO: config or depends on attackDelay
     moveTime = 0.5   //TODO: config or depends on attackDelay
     
     get killed() { return this.health <= 0 }
@@ -64,10 +67,25 @@ export class Hero {
     get classType() { return this.config.classType }
     get damage() { return this.config.damage }
     get name() { return this.config.name }
+    get ultType() { return this.config.ultType }
     get ultProgress() { return Math.min(1, (this._ultDt * 1000) / this.config.ultDelayMs) }
-    get attackDelayMs() { return this.config.attackDelayMs * 2.5 }
+    get attackDelayMs() { 
+        let multiplier = 1 / this._getBuffValue(BuffType.AttackSpeed)
+        return this.config.attackDelayMs * 2.5 * multiplier
+    }
 
-    getConfig() { this.config = Global.m.config.heroCfgs[this.type] }
+    private _ultFunc: (target: Hero) => void
+
+    getConfig() { 
+        this.config = Global.m.config.heroCfgs[this.type] 
+        switch (this.ultType) {
+            case UltType.AttackAll: this._ultFunc = (h: Hero) => h.getDamage(this, true); break
+            case UltType.Healing: this._ultFunc = (h: Hero) => h.addBuff(new Buff(BuffType.Heal, this.config.ultValue, this.config.ultDurationMs / 1000, 0.5)); break
+            case UltType.GodBless: this._ultFunc = (h: Hero) => h.addBuff(new Buff(BuffType.Shield, this.config.ultValue, this.config.ultDurationMs / 1000)); break
+            case UltType.BoostAttack: this._ultFunc = (h: Hero) => h.addBuff(new Buff(BuffType.AttackSpeed, this.config.ultValue, this.config.ultDurationMs / 1000)); break
+            default: break
+        }
+    }
 
     static create(type: HeroType, side: HeroSide, position: number) {
         let ret = new Hero()
@@ -86,7 +104,10 @@ export class Hero {
 
     update(dt) {
         if (this.state == HeroState.Freeze || this.killed) return
-        if (this.state != HeroState.Ulting) this._ultDt += dt
+        if (this.state != HeroState.Ulting) {
+            this._ultDt += dt
+            this._buffs.forEach(b => b.update(dt))
+        }
         this._time += dt
 
         if (this.state == HeroState.MovingTo && this.enemiesInRange.find(e => e == this.currentEnemy)) { this.shoot() }
@@ -108,26 +129,27 @@ export class Hero {
         }
     }
 
+    private _getUltTargets() {
+        let side = this.ultType == UltType.AttackAll ? HeroSide.Right - this.side : this.side
+        return Global.m.battle.sides[side].heroes.filter(t => !t.killed)
+    }
     ult() {
         if (this.killed || Global.m.battle.state != BattleState.Battle) return
         if (this._ultDt * 1000 < this.config.ultDelayMs) return
         
-        let allEnemies = Global.m.battle.sides[HeroSide.Right - this.side].heroes
-        let toAttack = allEnemies.filter(e => !e.killed)
-        
+        let targets = this._getUltTargets()
         this._ultDt = 0
         this._lastUltTime = this._time
-
+        
         this.state = HeroState.Ulting
-        this.onUlt.dispatch({o: this, t: toAttack})
-        Global.m.battle.logAllStates()
+        this.onUlt.dispatch({o: this, ut: this.ultType, t: targets})
+        // Global.m.battle.logAllStates()
     }
     afterUlt() {
         this.onUltEnded.dispatch(this)
 
-        let allEnemies = Global.m.battle.sides[HeroSide.Right - this.side].heroes
-        let attacked = allEnemies.filter(e => !e.killed)
-        attacked.forEach(h => h.getDamage(this, true))
+        let targets = this._getUltTargets()
+        targets.forEach(h => this._ultFunc(h))
 
         this.state = HeroState.Waiting
     }
@@ -150,11 +172,19 @@ export class Hero {
 
     getDamage(hero: Hero, ult: boolean) {
         let was = this.health
-        this.health = Math.max(0, this.health - (ult ? hero.config.ultDamage : hero.damage))
+
+        let dmg = ult ? hero.config.ultValue : hero.damage
+        this.health = Math.max(0, this.health - Math.floor(dmg * this._getBuffValue(BuffType.Shield)))
         if (this.health <= 0) {
             this.onDeath.dispatch()
         }
-        this.onTakeDamage.dispatch({ was: was })
+        this.onHealthChanged.dispatch({ was: was })
+    }
+
+    getHeal(v) {
+        let was = this.health
+        this.health = Math.min(this.config.health, this.health + v)
+        this.onHealthChanged.dispatch({ was: was })
     }
 
     onEnemyAttached(h: Hero) {
@@ -189,5 +219,19 @@ export class Hero {
     unFreeze() {
         this.state = this.savedState
         this.onUnFreeze.dispatch()
+    }
+
+    addBuff(b: Buff) {
+        if (this._buffs.some(buff => buff.tryMerge(b))) return
+        
+        this._buffs.push(b)
+        b.onFinish.add(this, () => this._buffs = this._buffs.filter(buff => buff != b))
+        b.setTarget(this)
+        this.onBuffAdded.dispatch(b)
+    }
+
+    private _getBuffValue(bt: BuffType) {
+        let buff = this._buffs.find(b => b.type == bt)
+        return buff ? buff.value : 1
     }
 }

@@ -6,6 +6,8 @@ import Archer from "../heroes/Archer";
 import MainAttack from "../heroes/MainAttack";
 import UltAnim from "../heroes/UltAnim";
 import { AnimType } from "./AnimType";
+import { Buff } from "../model/Buff";
+import BuffNode from "./BuffNode";
 
 const {ccclass, property} = cc._decorator;
 
@@ -14,6 +16,7 @@ export default class HeroView extends cc.Component {
     @property(cc.Sprite) icon: cc.Sprite = null
     @property(cc.Label) health: cc.Label = null
     @property(cc.ProgressBar) healthBar: cc.ProgressBar = null
+    @property(cc.Node) buffContainer: cc.Node = null
 
     private _hero: Hero
     private _allHeroViews: Array<HeroView>
@@ -31,7 +34,7 @@ export default class HeroView extends cc.Component {
         this._basePosition = this.node.getPosition()
         this.health.string = '' + h.health
         this.healthBar.progress = h.health / h.fullHealth
-        h.onTakeDamage.add(this, info => {
+        h.onHealthChanged.add(this, info => {
             this.health.string = '' + h.health
             this.healthBar.progress = h.health / h.fullHealth
             const t = 0.09
@@ -55,12 +58,19 @@ export default class HeroView extends cc.Component {
         h.onMovingBack.add(this, () => {
             this.action = cc.tween(this.icon.node).to(this._hero.moveTime, { position: this._basePosition }).start()
         })
-
+        h.onBuffAdded.add(this, (b: Buff) => {
+            if (b.duration == 0) return
+            Loader.loadNode('BuffNode').then((n: cc.Node) => {
+                n.getComponent(BuffNode).init(b.type)
+                this.buffContainer.addChild(n)
+                b.onFinish.add(n, () => n.destroy())
+            })
+        })
         h.onFreeze.add(this, () => this._freeze())
         h.onUnFreeze.add(this, () => this._unFreeze())
         h.onUlt.add(this, info => {
-            let enemies = info.t
-            let heroWithoutView = enemies.find(e => this._allHeroViews.find(h => h._hero == e) == undefined)
+            let targets = info.t
+            let heroWithoutView = targets.find(e => this._allHeroViews.find(h => h._hero == e) == undefined)
             if (heroWithoutView != undefined) {
                 cc.log("[HEROVIEW]", `error can't find view for: ${heroWithoutView}`)
             }
@@ -70,7 +80,7 @@ export default class HeroView extends cc.Component {
             this.stopAnim()
             //CANT FREEZE BECAUSE ACTIONS CANNOT BE SCHEDULED WITHOUT RESUME ALL ACTIONS
 
-            this.ultFunc(enemies.map(e => this._allHeroViews.find(h => h._hero == e)))
+            this.ultFunc(targets.map(e => this._allHeroViews.find(h => h._hero == e)))
         })
         h.onAttack.add(this, info => {
             let otherView = this._allHeroViews.find(h => h._hero == info.o)
